@@ -1,7 +1,16 @@
 {
   "name": "spelling-star-garden",
   "compatibility_date": "2026-07-29",
+  "workers_dev": true,
   "assets": {
     "directory": "./public"
-  }
+  },
+  // Custom domain on the ngpcloud.org zone (Cloudflare-managed DNS).
+  // Deploy attaches the domain and creates the DNS record when the zone is on Cloudflare.
+  "routes": [
+    {
+      "pattern": "spelling.ngpcloud.org",
+      "custom_domain": true
+    }
+  ]
 }

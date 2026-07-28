@@ -59,7 +59,8 @@ npx wrangler deploy
 
 Wrangler prints a `*.workers.dev` URL. Open that on the iPad — no Mac server, no Connect-to-Git.
 
-Optional custom domain later: either `npx wrangler deploy --domains spelling.example.com` (when DNS is ready) or dashboard Domains once.
+**Custom domain (live):** [https://spelling.ngpcloud.org](https://spelling.ngpcloud.org)  
+Configured in `wrangler.jsonc` as `routes: [{ pattern: "spelling.ngpcloud.org", custom_domain: true }]` plus `workers_dev: true`. Redeploy with `npx wrangler deploy` — DNS is auto-managed on the Cloudflare `ngpcloud.org` zone.
 
 ### Optional: Git auto-deploy (skip if you prefer CLI only)
 
