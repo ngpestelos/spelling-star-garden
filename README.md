@@ -25,7 +25,7 @@ Open: [http://localhost:8788](http://localhost:8788)
 
 - Static files only under `public/`
 - `wrangler.jsonc` → `assets.directory: ./public` (repo scripts/README never served)
-- **GitHub repo (done):** [ngpestelos/spelling-star-garden](https://github.com/ngpestelos/spelling-star-garden) (private)
+- **GitHub repo (done):** [ngpestelos/spelling-star-garden](https://github.com/ngpestelos/spelling-star-garden) (public)
 - **Cloudflare auto-deploys on every push to `master`** once the Worker is connected (below)
 
 ### One-time: connect Cloudflare to Git
