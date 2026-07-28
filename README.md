@@ -21,48 +21,60 @@ Open: [http://localhost:8788](http://localhost:8788)
 2. On the iPad Safari: `http://<that-ip>:8788`
 3. Keep the Mac awake and on the same network while playing.
 
-## Deployment (same pattern as [nowshowing](https://github.com/ngpestelos/nowshowing))
+## Deployment (CLI-first — no Workers web UI)
 
-- Static files only under `public/`
-- `wrangler.jsonc` → `assets.directory: ./public` (repo scripts/README never served)
-- **GitHub repo (done):** [ngpestelos/spelling-star-garden](https://github.com/ngpestelos/spelling-star-garden) (public)
-- **Cloudflare auto-deploys on every push to `master`** once the Worker is connected (below)
+Static files under `public/` only. Root `wrangler.jsonc` has `assets.directory: "./public"`.
 
-### One-time: connect Cloudflare to Git
+**GitHub:** [ngpestelos/spelling-star-garden](https://github.com/ngpestelos/spelling-star-garden) (public)
 
-1. Cloudflare dashboard → **Workers & Pages** → **Create application** → **Workers**
-2. **Connect to Git** → select `ngpestelos/spelling-star-garden`
-3. Settings:
-   - Build command: **leave empty**
-   - Deploy command: `npx wrangler deploy` (default — reads `wrangler.jsonc`)
-4. Deploy. You’ll get a `*.workers.dev` URL — open that on the iPad.
+### One-time auth (pick one)
 
-Optional custom domain: project → Settings → Domains → e.g. `spelling.ngpcloud.org` + DNS CNAME (same as nowshowing).
-
-**Do not merge** a Cloudflare bot PR that sets `assets.directory` to `"."` — that would publish the whole repo. Keep `./public`.
-
-### Day-to-day updates
+**A — OAuth (simplest once):**
 
 ```bash
 cd ~/src/spelling-star-garden
-# edit public/…
-git add -A && git commit -m "…" && git push
+npx wrangler login
+# completes in the browser; after that, all deploys are pure CLI
+npx wrangler whoami
 ```
 
-Cloudflare redeploys from `master` in ~30–60s. No local `wrangler deploy` required after Git is connected.
+**B — API token (no browser after the token exists):**
 
-### Local / dry-run (optional)
+1. Create a token with **Workers Scripts:Edit** + **Account:Read** (or use an existing CF token).
+2. Export for the shell (or put in a local, untracked env file):
+
+```bash
+export CLOUDFLARE_API_TOKEN=…   # never commit
+```
+
+### Deploy (every time)
+
+```bash
+cd ~/src/spelling-star-garden
+./scripts/deploy.sh
+# or:
+npx wrangler deploy --dry-run --outdir /tmp/ssg-dry-run   # expect ~5 public files
+npx wrangler deploy
+```
+
+Wrangler prints a `*.workers.dev` URL. Open that on the iPad — no Mac server, no Connect-to-Git.
+
+Optional custom domain later: either `npx wrangler deploy --domains spelling.example.com` (when DNS is ready) or dashboard Domains once.
+
+### Optional: Git auto-deploy (skip if you prefer CLI only)
+
+Cloudflare → Workers → Connect to Git → this repo. Same `wrangler.jsonc`. Reject bot PRs that set `assets.directory: "."`. Not required if you always run `./scripts/deploy.sh`.
+
+### Local serve (dev)
 
 ```bash
 python3 -m http.server 8788 --directory public
-npx wrangler deploy --dry-run --outdir /tmp/ssg-dry-run
-# expect ~5 files from ./public only
 ```
 
 ### Notes
 
 - Profiles/stickers are **per browser** `localStorage` (not synced iPad ↔ Mac).
-- Don’t open `file://` — use local HTTP or the workers.dev / custom URL.
+- Don’t open `file://` — use local HTTP or the workers.dev URL.
 
 ## How to play
 
