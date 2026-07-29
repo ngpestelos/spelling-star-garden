@@ -138,3 +138,7 @@ Vanilla HTML/CSS/JS. No build step. Logic in `public/words.js`; UI + profiles in
 - Two built-in profiles (Star / Rainbow) — no real personal names
 
 Not included yet: add/rename custom profiles, cross-session practice bag, sight-word mode, custom word lists.
+
+## License
+
+[MIT](LICENSE) © 2026 Nestor G Pestelos Jr
