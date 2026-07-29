@@ -1,12 +1,15 @@
 {
   "name": "spelling-star-garden",
+  "main": "src/worker.js",
   "compatibility_date": "2026-07-29",
   "workers_dev": true,
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    "binding": "ASSETS",
+    // Required so HTTP→HTTPS redirect in src/worker.js runs before static asset CDN
+    "run_worker_first": true
   },
   // Custom domain on the ngpcloud.org zone (Cloudflare-managed DNS).
-  // Deploy attaches the domain and creates the DNS record when the zone is on Cloudflare.
   "routes": [
     {
       "pattern": "spelling.ngpcloud.org",
