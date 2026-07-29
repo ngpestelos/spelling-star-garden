@@ -4,6 +4,8 @@ A calm, touch-first spelling game for early readers. Short sessions, letter tile
 
 **Family practice tool.** Separate in-browser profiles per player (no real names in the UI). No cloud accounts. No ads.
 
+Product rules (stickers, gardens, difficulty, cold probe): [docs/product.md](docs/product.md).
+
 ## Run (required: HTTP, not file://)
 
 Chrome/Safari block `localStorage` on `file://`. Always serve:
