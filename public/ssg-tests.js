@@ -175,6 +175,12 @@
         }),
         "short filter only short"
       );
+      assert(
+        short.every(function (e) {
+          return e.word.length <= 4;
+        }),
+        "short words at most 4 letters"
+      );
       const omitted = SSG.filterBankByLevel();
       assert(
         omitted.every(function (e) {
@@ -190,9 +196,63 @@
       assert(defaultSession.length === 3, "default session size");
       assert(
         defaultSession.every(function (w) {
-          return w.level === "short";
+          return w.level === "short" && w.word.length <= 4;
         }),
-        "default session is short"
+        "default session is short (≤4 letters)"
+      );
+      assert(
+        !defaultSession.some(function (w) {
+          return w.word === "children";
+        }),
+        "default session never includes children"
+      );
+    });
+
+    suite("length caps (no long words for beginners)", function () {
+      const short = SSG.filterBankByLevel("short");
+      const medium = SSG.filterBankByLevel("medium");
+      const mix = SSG.filterBankByLevel("mix");
+      const long = SSG.filterBankByLevel("long");
+      assert(
+        short.every(function (e) {
+          return e.word.length <= 4;
+        }),
+        "short cap ≤4"
+      );
+      assert(
+        medium.every(function (e) {
+          return e.word.length <= 6;
+        }),
+        "medium cap ≤6"
+      );
+      assert(
+        mix.every(function (e) {
+          return e.word.length <= 6 && e.level !== "long";
+        }),
+        "mix excludes long / 7+ letters"
+      );
+      assert(
+        !mix.some(function (e) {
+          return e.word === "children";
+        }),
+        "mix never includes children"
+      );
+      assert(
+        long.some(function (e) {
+          return e.word === "children";
+        }),
+        "children only available on long"
+      );
+      const longSession = SSG.pickSessionWords(5, SSG.WORD_BANK, null, "long");
+      assert(longSession.length === 5, "long session still works");
+      const misTag = [
+        { word: "children", emoji: "🧒", level: "short" },
+        { word: "cat", emoji: "🐱", level: "short" },
+      ];
+      const capped = SSG.filterBankByLevel("short", misTag);
+      assert(
+        capped.length === 1 && capped[0].word === "cat",
+        "mis-tagged long word excluded from short by length"
       );
     });
 

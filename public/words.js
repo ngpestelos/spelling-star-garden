@@ -7,11 +7,13 @@
 
   /**
    * level:
-   *   short  — 3–4 letters (CVC / simple) — beginner default
-   *   medium — 5–6 letters
-   *   long   — 6–10 letters (multi-syllable targets like "teacher")
+   *   short  — 3–4 letters (CVC / simple) — beginner default; hard max 4
+   *   medium — 5–6 letters; hard max 6
+   *   long   — multi-syllable (teacher, children, …); not for beginners
+   *   mix    — short + medium only (never long / 7+ letter words)
    * Default level when omitted: short (beginner confidence).
    */
+  const LEVEL_MAX_LEN = { short: 4, medium: 6 };
   const WORD_BANK = [
     // short
     { word: "cat", emoji: "🐱", level: "short" },
@@ -92,16 +94,36 @@
   function filterBankByLevel(level, bank) {
     const source = bank || WORD_BANK;
     const lv = level || "short";
-    if (lv === "mix") {
-      return source.slice();
+
+    function withinCap(entry, maxLen) {
+      if (!entry || !entry.word) return false;
+      return entry.word.length <= maxLen;
     }
-    if (lv === "short" || lv === "medium" || lv === "long") {
-      /* Fail closed: empty level pool stays empty (never silently Mix). */
+
+    if (lv === "mix") {
+      /* Short + medium only — never 7+ letter long words (e.g. children). */
       return source.filter(function (e) {
-        return e.level === lv;
+        return (
+          (e.level === "short" && withinCap(e, LEVEL_MAX_LEN.short)) ||
+          (e.level === "medium" && withinCap(e, LEVEL_MAX_LEN.medium))
+        );
       });
     }
-    return source.slice();
+    if (lv === "short" || lv === "medium") {
+      const maxLen = LEVEL_MAX_LEN[lv];
+      return source.filter(function (e) {
+        return e.level === lv && withinCap(e, maxLen);
+      });
+    }
+    if (lv === "long") {
+      return source.filter(function (e) {
+        return e.level === "long";
+      });
+    }
+    /* Unknown level → beginner short (fail safe). */
+    return source.filter(function (e) {
+      return e.level === "short" && withinCap(e, LEVEL_MAX_LEN.short);
+    });
   }
 
   /** Fisher–Yates; does not mutate input. */

@@ -161,6 +161,31 @@
     return true;
   }
 
+  /**
+   * Second pass: devices that kept Long (stale deploy / parent stretch) still hit
+   * 7–8 letter words like "children". One more forced Long→Short; Long stays
+   * available in ⚙️ after this flag is set.
+   */
+  function applyBeginnerLengthMigration(store) {
+    if (!store || store.beginnerLengthMigrated === true) {
+      return false;
+    }
+    Object.keys(store.profiles || {}).forEach(function (id) {
+      const p = store.profiles[id];
+      if (p && p.settings && p.settings.wordLevel === "long") {
+        p.settings.wordLevel = "short";
+      }
+    });
+    store.beginnerLengthMigrated = true;
+    return true;
+  }
+
+  function applyAllMigrations(store) {
+    const a = applyDifficultyMigration(store);
+    const b = applyBeginnerLengthMigration(store);
+    return a || b;
+  }
+
   function loadStore() {
     let store = loadRaw(STORAGE.profiles);
     if (!store || !store.profiles) {
@@ -173,7 +198,7 @@
         migrateLegacyInto(store.profiles.star);
       }
       /* After legacy merge so old ssg_settings long is rewritten once */
-      applyDifficultyMigration(store);
+      applyAllMigrations(store);
       saveRaw(STORAGE.profiles, store);
       return store;
     }
@@ -200,7 +225,7 @@
         if (store.activeId === id) store.activeId = null;
       }
     });
-    applyDifficultyMigration(store);
+    applyAllMigrations(store);
     saveRaw(STORAGE.profiles, store);
     return store;
   }
