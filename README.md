@@ -117,9 +117,16 @@ After a session, wait ~2 minutes. Dictate **three words they just spelled** with
 ## Tests
 
 ```bash
-# with server running
+# headless (CI + local) — same suites as the browser page
+node scripts/run-tests.mjs
+
+# browser (with server running)
+python3 -m http.server 8788 --directory public
 open http://localhost:8788/test.html
 ```
+
+GitHub Actions runs `node scripts/run-tests.mjs`, checks required static files, and `wrangler deploy --dry-run` on every push/PR (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+
 
 ## Stack
 
