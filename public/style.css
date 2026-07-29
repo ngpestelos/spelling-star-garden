@@ -531,6 +531,26 @@ body.reduce-motion .celebrate {
   color: var(--accent-soft);
 }
 
+.site-footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.site-footer a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: var(--accent-soft);
+  border-bottom-color: var(--accent-soft);
+}
+
 .rest-note {
   color: var(--muted);
   text-align: center;
