@@ -15,7 +15,7 @@
 
   const DEFAULT_SETTINGS = {
     sessionLength: 5,
-    wordLevel: "long",
+    wordLevel: "short",
     speech: true,
     reducedMotion: false,
     showWordCheat: false,
@@ -27,7 +27,7 @@
       id: "star",
       name: "Star",
       emoji: "🌟",
-      settings: Object.assign({}, DEFAULT_SETTINGS, { wordLevel: "long" }),
+      settings: Object.assign({}, DEFAULT_SETTINGS, { wordLevel: "short" }),
     },
     {
       id: "rainbow",
@@ -141,6 +141,26 @@
     return store;
   }
 
+  /**
+   * One-time: legacy default Long → Short for beginner confidence.
+   * Sets difficultyMigrated on every path so intentional Long after upgrade is kept.
+   * Does not touch medium / mix.
+   * @returns {boolean} true if store was mutated (including flag only)
+   */
+  function applyDifficultyMigration(store) {
+    if (!store || store.difficultyMigrated === true) {
+      return false;
+    }
+    Object.keys(store.profiles || {}).forEach(function (id) {
+      const p = store.profiles[id];
+      if (p && p.settings && p.settings.wordLevel === "long") {
+        p.settings.wordLevel = "short";
+      }
+    });
+    store.difficultyMigrated = true;
+    return true;
+  }
+
   function loadStore() {
     let store = loadRaw(STORAGE.profiles);
     if (!store || !store.profiles) {
@@ -152,6 +172,8 @@
       if (store.profiles.star) {
         migrateLegacyInto(store.profiles.star);
       }
+      /* After legacy merge so old ssg_settings long is rewritten once */
+      applyDifficultyMigration(store);
       saveRaw(STORAGE.profiles, store);
       return store;
     }
@@ -178,6 +200,7 @@
         if (store.activeId === id) store.activeId = null;
       }
     });
+    applyDifficultyMigration(store);
     saveRaw(STORAGE.profiles, store);
     return store;
   }
@@ -388,7 +411,7 @@
     }
     const settings = getSettings();
     const length = Number(settings.sessionLength) || 5;
-    const level = settings.wordLevel || "long";
+    const level = settings.wordLevel || "short";
     const words = SSG.pickSessionWords(length, SSG.WORD_BANK, null, level);
     state.session = {
       queue: words.slice(1),
@@ -685,7 +708,7 @@
     el("parent-player-label").textContent =
       "Editing settings for " + p.name;
     el("setting-length").value = String(settings.sessionLength || 5);
-    el("setting-level").value = settings.wordLevel || "long";
+    el("setting-level").value = settings.wordLevel || "short";
     el("setting-speech").checked = settings.speech !== false;
     el("setting-motion").checked = !!settings.reducedMotion;
     el("setting-cheat").checked = !!settings.showWordCheat;
@@ -695,7 +718,7 @@
   function saveParent() {
     setSettings({
       sessionLength: Number(el("setting-length").value) || 5,
-      wordLevel: el("setting-level").value || "long",
+      wordLevel: el("setting-level").value || "short",
       speech: el("setting-speech").checked,
       reducedMotion: el("setting-motion").checked,
       showWordCheat: el("setting-cheat").checked,

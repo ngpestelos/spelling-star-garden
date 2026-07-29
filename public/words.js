@@ -7,9 +7,10 @@
 
   /**
    * level:
-   *   short  — 3–4 letters (CVC / simple)
+   *   short  — 3–4 letters (CVC / simple) — beginner default
    *   medium — 5–6 letters
-   *   long   — 7–10 letters (multi-syllable targets like "teacher")
+   *   long   — 6–10 letters (multi-syllable targets like "teacher")
+   * Default level when omitted: short (beginner confidence).
    */
   const WORD_BANK = [
     // short
@@ -90,15 +91,15 @@
 
   function filterBankByLevel(level, bank) {
     const source = bank || WORD_BANK;
-    const lv = level || "long";
+    const lv = level || "short";
     if (lv === "mix") {
       return source.slice();
     }
     if (lv === "short" || lv === "medium" || lv === "long") {
-      const filtered = source.filter(function (e) {
+      /* Fail closed: empty level pool stays empty (never silently Mix). */
+      return source.filter(function (e) {
         return e.level === lv;
       });
-      return filtered.length ? filtered : source.slice();
     }
     return source.slice();
   }
