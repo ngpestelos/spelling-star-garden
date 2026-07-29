@@ -90,8 +90,10 @@ python3 -m http.server 8788 --directory public
 
 | Player | Default word length | Notes |
 |--------|---------------------|--------|
-| Star | Long (teacher, school, …) | Any old single-player progress migrates here once |
-| Rainbow | Medium (apple, happy, …) | Own garden from zero |
+| Star | Short (cat, fish, …) | Beginner default; any old single-player progress migrates here once |
+| Rainbow | Medium (apple, happy, …) | Slightly longer words; own garden from zero |
+
+**One-time upgrade:** profiles still on **Long** (the old hard default) are rewritten to **Short** once, then a `difficultyMigrated` flag is set so a parent who later chooses Long is not overwritten again. Medium and Mix are never auto-changed.
 
 Parent settings and **Reset** apply to the **current player only**.
 

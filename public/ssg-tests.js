@@ -166,6 +166,36 @@
       );
     });
 
+    suite("beginner defaults (Phase A)", function () {
+      const short = SSG.filterBankByLevel("short");
+      assert(short.length > 0, "short pool non-empty");
+      assert(
+        short.every(function (e) {
+          return e.level === "short";
+        }),
+        "short filter only short"
+      );
+      const omitted = SSG.filterBankByLevel();
+      assert(
+        omitted.every(function (e) {
+          return e.level === "short";
+        }),
+        "omitted level defaults to short"
+      );
+      assert(omitted.length === short.length, "default matches short");
+      const emptyBank = [{ word: "zzz", emoji: "❓", level: "long" }];
+      const emptyShort = SSG.filterBankByLevel("short", emptyBank);
+      assert(emptyShort.length === 0, "empty short fails closed (not Mix)");
+      const defaultSession = SSG.pickSessionWords(3, SSG.WORD_BANK, null);
+      assert(defaultSession.length === 3, "default session size");
+      assert(
+        defaultSession.every(function (w) {
+          return w.level === "short";
+        }),
+        "default session is short"
+      );
+    });
+
     suite("maybeBonusCheck every 3rd", function () {
       const item = { word: "sun", emoji: "☀️", isBonusCheck: false };
       assert(SSG.maybeBonusCheck(3, item).isBonusCheck, "3rd star bonus");
