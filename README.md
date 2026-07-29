@@ -93,7 +93,7 @@ python3 -m http.server 8788 --directory public
 | Star | Short (cat, fish, …) | Beginner default; any old single-player progress migrates here once |
 | Rainbow | Medium (apple, happy, …) | Slightly longer words; own garden from zero |
 
-**One-time upgrade:** profiles still on **Long** (the old hard default) are rewritten to **Short** once, then a `difficultyMigrated` flag is set so a parent who later chooses Long is not overwritten again. Medium and Mix are never auto-changed.
+**One-time upgrades:** profiles still on **Long** (old hard default) are rewritten to **Short** (flags `difficultyMigrated` + `beginnerLengthMigrated`). After that, a parent who chooses Long in ⚙️ keeps it. Medium is never auto-changed. **Mix** is short + medium only (never 7+ letter words like *children*).
 
 Parent settings and **Reset** apply to the **current player only**.
 
