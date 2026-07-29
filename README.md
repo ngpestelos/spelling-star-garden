@@ -97,7 +97,7 @@ Parent settings and **Reset** apply to the **current player only**.
 
 ### Parent settings
 
-Hold the ⚙️ gear on Home for **2 seconds** (player already selected):
+Tap the ⚙️ gear on Home (player already selected):
 
 | Setting | Purpose |
 |---------|---------|

@@ -719,21 +719,6 @@
     updateHome();
   }
 
-  /* Parent gear: hold 2s */
-  let gearTimer = null;
-  function gearStart() {
-    gearTimer = window.setTimeout(function () {
-      gearTimer = null;
-      openParent();
-    }, 2000);
-  }
-  function gearEnd() {
-    if (gearTimer) {
-      window.clearTimeout(gearTimer);
-      gearTimer = null;
-    }
-  }
-
   function bind() {
     el("btn-play").addEventListener("click", function () {
       startSession();
@@ -763,20 +748,7 @@
     });
     el("btn-reset").addEventListener("click", resetProgress);
 
-    const gear = el("btn-gear");
-    gear.addEventListener("mousedown", gearStart);
-    gear.addEventListener("mouseup", gearEnd);
-    gear.addEventListener("mouseleave", gearEnd);
-    gear.addEventListener(
-      "touchstart",
-      function (e) {
-        e.preventDefault();
-        gearStart();
-      },
-      { passive: false }
-    );
-    gear.addEventListener("touchend", gearEnd);
-    gear.addEventListener("touchcancel", gearEnd);
+    el("btn-gear").addEventListener("click", openParent);
   }
 
   function init() {
