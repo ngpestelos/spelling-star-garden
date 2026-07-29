@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests + assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Unit tests (words.js)
+        run: node scripts/run-tests.mjs
+
+      - name: Required static files
+        run: |
+          set -euo pipefail
+          for f in \
+            public/index.html \
+            public/app.js \
+            public/words.js \
+            public/ssg-tests.js \
+            public/test.html \
+            public/style.css \
+            src/worker.js \
+            wrangler.jsonc \
+            scripts/deploy.sh \
+            scripts/run-tests.mjs
+          do
+            test -f "$f" || { echo "missing: $f"; exit 1; }
+            echo "ok $f"
+          done
+
+      - name: Wrangler dry-run (package assets)
+        run: npx --yes wrangler@4 deploy --dry-run --outdir /tmp/ssg-ci-dry-run
